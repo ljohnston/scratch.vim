@@ -7,13 +7,24 @@ function! s:activate_autocmds(bufnr)
     augroup ScratchAutoHide
       autocmd!
       execute 'autocmd WinEnter <buffer=' . a:bufnr . '> nested call <SID>close_window(0)'
-      execute 'autocmd Winleave <buffer=' . a:bufnr . '> nested call <SID>close_window(1)'
+      execute 'autocmd WinLeave <buffer=' . a:bufnr . '> nested call <SID>close_window(1)'
+    augroup END
+  endif
+  if strlen(g:scratch_persistence_file) > 0
+    augroup ScratchPersist
+      autocmd!
+      execute 'autocmd BufLeave    <buffer=' . a:bufnr . '> :w!' . g:scratch_persistence_file
+      execute 'autocmd WinLeave    <buffer=' . a:bufnr . '> :w!' . g:scratch_persistence_file
+      execute 'autocmd VimLeavePre <buffer=' . a:bufnr . '> :w!' . g:scratch_persistence_file 
     augroup END
   endif
 endfunction
 
 function! s:deactivate_autocmds()
   augroup ScratchAutoHide
+    autocmd!
+  augroup END
+  augroup ScratchPersist
     autocmd!
   augroup END
 endfunction
